@@ -25,6 +25,10 @@ app.get("/form", function(req,res){
     res.sendFile(__dirname + "/form.html");
 });
 
+app.get("/post", function(req,res){
+    res.sendFile(__dirname + "/post.html");
+});
+
 app.post("/signup", function(req, res) {
     const firstName = req.body.firstname;
     const lastName = req.body.lastName;
@@ -47,7 +51,7 @@ app.post("/signup", function(req, res) {
 
     const options = {
         method: "POST",
-        auth: "viki5156:454d42314ad42ecdd8e40d1a98afa914-us8"
+        auth: "viki5156:4bf35cad79f512e1a62b591f8a1d8fb8-us8"
     }
 
     const request = https.request(url, options, function(response) {
@@ -67,52 +71,58 @@ app.post("/signup", function(req, res) {
     request.end();
 });
 
-app.post("/form", function(req, res) {
+app.post("/form-initial", function(req, res) {
 
     const newEventName = req.body.eventname;
     const startTime = req.body.startdate;
     const endTime = req.body.enddate;
     const currency = req.body.currency;
+    const capacity = req.body.capacity;
 
     var data = {
         event: {
             name: {
-                html: "pubG battle royal"
+                html: req.body.eventname
             },
             start: {
                 timezone: "America/Los_Angeles",
-                utc: "2020-07-11T02:00:00Z"
+                utc: req.body.startdate
             },
             end: {
                 timezone: "America/Los_Angeles",
-                utc: "2020-07-21T02:00:00Z"
+                utc: req.body.enddate
             },
-            currency: "USD"
+            currency: "USD",
         }
     }
 
     var jsonData = JSON.stringify(data);
 
-    const url = "https://www.eventbriteapi.com/v3/organizations/456317456066/events/";
+    // const url = "https://www.eventbriteapi.com/v3/organizations/456317456066/events/";
 
     const options = {
+        hostname: "eventbriteapi.com",
+        path: "/v3/organizations/456317456066/events/",
         method: "POST",
         headers: {
-            Authorization: "Bearer SGADKQST2E2ALBESKP7D",
-            Accept: "application/json"
+            'Authorization': "Bearer SGADKQST2E2ALBESKP7D",
+            'Content-Type': "application/json"
         }
     }
 
-    const request = https.request(url, options, function(response) {
+    const request = https.request(options, function(response) {
         response.on("data", function(data) {
-            console.log(JSON.parse(data));
+            console.log(data);
         });
     });
-    console.log(jsonData);
+    // console.log(jsonData);
     request.write(jsonData);
     request.end();
 
+    res.redirect("/post");
+
 });
+
 
 
 
